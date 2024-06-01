@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
+import 'theme_model.dart';
 import 'setting.dart';
 
 class FeedbackPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var themeModel = Provider.of<ThemeModel>(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -24,7 +27,7 @@ class FeedbackPage extends StatelessWidget {
                   icon: Icon(
                     Icons.arrow_back,
                     size: 30,
-                    color: Color(0xFF353535),
+                    color: themeModel.isDarkMode ? Colors.white : Colors.black,
                   ),
                 ),
               ],
@@ -40,7 +43,7 @@ class FeedbackPage extends StatelessWidget {
                 Text(
                   'Feedback',
                   style: TextStyle(
-                    color: Color(0xFF353535),
+                    color: themeModel.isDarkMode ? Colors.white : Colors.black,
                     fontSize: 40,
                     fontFamily: 'Nunito Sans',
                     fontWeight: FontWeight.w700,
@@ -53,7 +56,7 @@ class FeedbackPage extends StatelessWidget {
                 Text(
                   'Share your experience in scalling:',
                   style: TextStyle(
-                    color: Colors.black,
+                    color: themeModel.isDarkMode ? Colors.white : Colors.black,
                     fontSize: 15,
                     fontFamily: 'Nunito Sans',
                     fontWeight: FontWeight.w700,
@@ -84,7 +87,7 @@ class FeedbackPage extends StatelessWidget {
                     // Tambahkan kode untuk menyimpan perubahan bahasa
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF3E4553),
+                    backgroundColor: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -94,7 +97,7 @@ class FeedbackPage extends StatelessWidget {
                   child: Text(
                     'SUBMIT',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: themeModel.isDarkMode ? Color(0xFF353535) : Colors.white,
                       fontSize: 20,
                       fontFamily: 'Nunito Sans',
                       fontWeight: FontWeight.w700,
@@ -148,6 +151,7 @@ class InputFeed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var themeModel = Provider.of<ThemeModel>(context);
     return Container(
       width: 340,
       height: 150,
@@ -155,7 +159,7 @@ class InputFeed extends StatelessWidget {
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: themeModel.isDarkMode ? Colors.white : Color(0xFF353535)),
       ),
       child: TextField(
         maxLines:

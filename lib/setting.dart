@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'theme_model.dart';
 import 'feedback.dart';
 import 'gantiBahasa.dart';
 import 'gantiTema.dart';
@@ -6,30 +8,31 @@ import 'gantiTema.dart';
 class Setting extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var themeModel = Provider.of<ThemeModel>(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 10, top: 50), // Mengatur jarak panah
+            padding: EdgeInsets.only(left: 10, top: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 IconButton(
                   onPressed: () {
-                    // Tambahkan kode fungsi untuk tombol panah di sini
+                    Navigator.pop(context);
                   },
                   icon: Icon(
                     Icons.arrow_back,
                     size: 30,
-                    color: Color(0xFF353535),
+                    color: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
                   ),
                 ),
               ],
             ),
           ),
           Align(
-            alignment: Alignment.topCenter, // Menempatkan teks "Setting" dan tombol-tombol ke atas
+            alignment: Alignment.topCenter,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -37,7 +40,7 @@ class Setting extends StatelessWidget {
                 Text(
                   'Settings',
                   style: TextStyle(
-                    color: Color(0xFF353535),
+                    color: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
                     fontSize: 40,
                     fontFamily: 'Nunito Sans',
                     fontWeight: FontWeight.w700,
@@ -52,7 +55,7 @@ class Setting extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF3E4553),
+                    backgroundColor: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -62,7 +65,7 @@ class Setting extends StatelessWidget {
                   child: Text(
                     'Change Language',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: themeModel.isDarkMode ? Color(0xFF353535) : Colors.white,
                       fontSize: 20,
                       fontFamily: 'Nunito Sans',
                       fontWeight: FontWeight.w700,
@@ -78,7 +81,7 @@ class Setting extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF3E4553),
+                    backgroundColor: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -88,7 +91,7 @@ class Setting extends StatelessWidget {
                   child: Text(
                     'Change Theme',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: themeModel.isDarkMode ? Color(0xFF353535) : Colors.white,
                       fontSize: 20,
                       fontFamily: 'Nunito Sans',
                       fontWeight: FontWeight.w700,
@@ -104,7 +107,7 @@ class Setting extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF3E4553),
+                    backgroundColor: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -114,7 +117,7 @@ class Setting extends StatelessWidget {
                   child: Text(
                     'Feedback',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: themeModel.isDarkMode ? Color(0xFF353535) : Colors.white,
                       fontSize: 20,
                       fontFamily: 'Nunito Sans',
                       fontWeight: FontWeight.w700,

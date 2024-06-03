@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'theme_model.dart';
 import 'setting.dart';
 
@@ -123,8 +124,8 @@ final MaterialStateProperty<Icon?> thumbIcon =
     MaterialStateProperty.resolveWith<Icon?>(
   (Set<MaterialState> states) {
     if (states.contains(MaterialState.selected)) {
-      return const Icon(Icons.check);
+      return const Icon(FontAwesomeIcons.solidMoon); // Ikon bintang dari Font Awesome
     }
-    return const Icon(Icons.close);
-  },
+    return const Icon(FontAwesomeIcons.sun); // Ikon setengah bulan dari Font Awesome
+  }
 );

@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'theme_model.dart';
 import 'setting.dart';
 
-class FeedbackPage extends StatelessWidget {
+class FeedbackPage extends StatefulWidget {
+  @override
+  _FeedbackPageState createState() => _FeedbackPageState();
+}
+
+class _FeedbackPageState extends State<FeedbackPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _commentController = TextEditingController();
+  double _rating = 3.0;
+
   @override
   Widget build(BuildContext context) {
     var themeModel = Provider.of<ThemeModel>(context);
@@ -13,7 +25,7 @@ class FeedbackPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 10, top: 50), // Mengatur jarak panah
+            padding: EdgeInsets.only(left: 10, top: 50),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -34,8 +46,7 @@ class FeedbackPage extends StatelessWidget {
             ),
           ),
           Align(
-            alignment: Alignment
-                .topCenter, // Menempatkan teks "Setting" dan tombol-tombol ke atas
+            alignment: Alignment.topCenter,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -49,59 +60,119 @@ class FeedbackPage extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                //
                 SizedBox(height: 20),
-                FormFeed(),
-                SizedBox(height: 20),
-                Text(
-                  'Share your experience in scalling:',
-                  style: TextStyle(
-                    color: themeModel.isDarkMode ? Colors.white : Colors.black,
-                    fontSize: 15,
-                    fontFamily: 'Nunito Sans',
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                // rating bar
-                SizedBox(height: 10),
-                RatingBar.builder(
-                  initialRating: 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-                SizedBox(height: 10),
-                InputFeed(),
-                SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Tambahkan kode untuk menyimpan perubahan bahasa
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    elevation: 4,
-                    minimumSize: Size(250, 44),
-                  ),
-                  child: Text(
-                    'SUBMIT',
-                    style: TextStyle(
-                      color: themeModel.isDarkMode ? Color(0xFF353535) : Colors.white,
-                      fontSize: 20,
-                      fontFamily: 'Nunito Sans',
-                      fontWeight: FontWeight.w700,
-                    ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _nameController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Name',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your name';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            TextFormField(
+                              controller: _emailController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                hintText: 'Email',
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Share your experience in scaling:',
+                        style: TextStyle(
+                          color: themeModel.isDarkMode ? Colors.white : Colors.black,
+                          fontSize: 15,
+                          fontFamily: 'Nunito Sans',
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      RatingBar.builder(
+                        initialRating: 3,
+                        minRating: 1,
+                        direction: Axis.horizontal,
+                        allowHalfRating: true,
+                        itemCount: 5,
+                        itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                        itemBuilder: (context, _) => Icon(
+                          Icons.star,
+                          color: Colors.amber,
+                        ),
+                        onRatingUpdate: (rating) {
+                          _rating = rating;
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      Container(
+                        width: 340,
+                        height: 150,
+                        margin: EdgeInsets.all(16),
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: themeModel.isDarkMode
+                                  ? Colors.white
+                                  : Color(0xFF353535)),
+                        ),
+                        child: TextFormField(
+                          controller: _commentController,
+                          maxLines: null,
+                          decoration: InputDecoration(
+                            hintText: 'Add your comments',
+                            border: InputBorder.none,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            _submitFeedback(context); // Pass context here
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: themeModel.isDarkMode ? Colors.white : Color(0xFF353535),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 4,
+                          minimumSize: Size(250, 44),
+                        ),
+                        child: Text(
+                          'SUBMIT',
+                          style: TextStyle(
+                            color: themeModel.isDarkMode ? Color(0xFF353535) : Colors.white,
+                            fontSize: 20,
+                            fontFamily: 'Nunito Sans',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -111,64 +182,25 @@ class FeedbackPage extends StatelessWidget {
       ),
     );
   }
-}
 
-class FormFeed extends StatelessWidget {
-  const FormFeed({Key? key});
+  void _submitFeedback(BuildContext context) async { // Accept context as a parameter
+    final feedbackData = {
+      'name': _nameController.text,
+      'email': _emailController.text,
+      'rating': _rating,
+      'comments': _commentController.text,
+      'timestamp': Timestamp.now(),
+    };
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          child: Column(
-            children: [
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Name',
-                ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Email',
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class InputFeed extends StatelessWidget {
-  const InputFeed({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    var themeModel = Provider.of<ThemeModel>(context);
-    return Container(
-      width: 340,
-      height: 150,
-      margin: EdgeInsets.all(16),
-      padding: EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: themeModel.isDarkMode ? Colors.white : Color(0xFF353535)),
-      ),
-      child: TextField(
-        maxLines:
-            null, // Biarkan teks field dapat menyesuaikan ketinggian secara otomatis
-        decoration: InputDecoration(
-          hintText: 'Add your comments',
-          border: InputBorder.none,
-        ),
-      ),
-    );
+    try {
+      await FirebaseFirestore.instance.collection('feedback').add(feedbackData);
+      // Optionally, show a success message or navigate away
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Feedback submitted successfully!')));
+    } catch (e) {
+      // Handle any errors
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to submit feedback: $e')));
+    }
   }
 }

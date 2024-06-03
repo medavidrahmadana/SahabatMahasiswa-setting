@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'theme_model.dart';
 import 'setting.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeModel()..loadTheme(),
@@ -28,19 +32,19 @@ class _MyAppState extends State<MyApp> {
   Locale? _locale;
 
   void _loadLocaleAndTheme() async {
-  await Provider.of<ThemeModel>(context, listen: false).loadTheme();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? localeCode = prefs.getString('locale');
-  setState(() {
-    _locale = localeCode != null ? Locale(localeCode) : Locale('en');
-  });
-}
+    await Provider.of<ThemeModel>(context, listen: false).loadTheme();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? localeCode = prefs.getString('locale');
+    setState(() {
+      _locale = localeCode != null ? Locale(localeCode) : Locale('en');
+    });
+  }
 
-@override
-void initState() {
-  super.initState();
-  _loadLocaleAndTheme();
-}
+  @override
+  void initState() {
+    super.initState();
+    _loadLocaleAndTheme();
+  }
 
   void setLocale(Locale locale) {
     setState(() {
@@ -64,9 +68,9 @@ void initState() {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: Setting(), // Sesuaikan dengan layar awal Anda
+          home: Setting(), // Adjust to your initial screen
         );
-      }
+      },
     );
   }
 }
